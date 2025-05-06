@@ -1,24 +1,33 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : SingletonPersistent<GameManager>
 {
-    public static GameManager Instance { get; private set; }
-
     private float gameTime = 0f;
     private bool isPaused = false;
 
-    private void Awake()
+    [Header("Eventos")]
+    [SerializeField] private GameBoolEvent victoryDefeatEvent; // Asignar en Inspector
+
+    public bool LastGameResult { get; private set; }
+
+    private void OnEnable()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (victoryDefeatEvent != null)
+            victoryDefeatEvent.Register(GetComponent<GameBoolEventListener>());
     }
 
+    private void OnDisable()
+    {
+        if (victoryDefeatEvent != null)
+            victoryDefeatEvent.Unregister(GetComponent<GameBoolEventListener>());
+    }
+
+    public void HandleVictoryCondition(bool isVictory)
+    {
+        LastGameResult = isVictory;
+        SceneManager.LoadScene("Results");
+    }
     private void Update()
     {
         if (!isPaused)

@@ -2359,6 +2359,9 @@ MonoBehaviour:
   - {fileID: 823862129}
   scoreText: {fileID: 750650373}
   playerScoreData: {fileID: 11400000, guid: a9d6eb0ddc7927548bdaceafc4507864, type: 2}
+  coinCollectedEvent: {fileID: 11400000, guid: 8145470358c49334abe5fecc7ad3e90c, type: 2}
+  healthChangedEvent: {fileID: 11400000, guid: d7cc74fe6207de34680cafad1c0429b7, type: 2}
+  damageTakenEvent: {fileID: 11400000, guid: 6fd835d58a0425e46aea3a1897c208ba, type: 2}
 --- !u!114 &1060735557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2626,6 +2629,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b561fd4a427064293523d01d70627c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coinCollectedEvent: {fileID: 11400000, guid: 8145470358c49334abe5fecc7ad3e90c, type: 2}
+  healthChangedEvent: {fileID: 11400000, guid: d7cc74fe6207de34680cafad1c0429b7, type: 2}
+  damageTakenEvent: {fileID: 11400000, guid: 6fd835d58a0425e46aea3a1897c208ba, type: 2}
   maxHealth: 10
   maxJumps: 2
   moveSpeed: 5

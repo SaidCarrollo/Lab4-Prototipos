@@ -14,14 +14,19 @@ public class GameplayUIManager : MonoBehaviour
 
     [Header("Scriptable Objects")]
     [SerializeField] private PlayerScoreData playerScoreData;
+    [SerializeField] private GameIntEvent coinCollectedEvent;
+    [SerializeField] private GameIntEvent healthChangedEvent;
+    [SerializeField] private GameIntEvent damageTakenEvent;
 
     private float elapsedTime = 0f;
-    private int currentScore = 0;
     private int maxHealth = 10;
 
     private void Start()
     {
-        playerScoreData.ResetScore(); 
+        playerScoreData.ResetScore();
+        healthBar.maxValue = maxHealth;
+        healthBar.value = maxHealth;
+
         pauseButton.onClick.AddListener(() => UIEventManager.Instance.OnPause?.Invoke());
 
         foreach (var button in colorButtons)
@@ -30,9 +35,10 @@ public class GameplayUIManager : MonoBehaviour
             button.onClick.AddListener(() => UIEventManager.Instance.OnColorChange?.Invoke(color));
         }
 
-        UIEventManager.Instance.OnCoinCollected += UpdateScore;
-        UIEventManager.Instance.OnHeartCollected += Heal;
-        UIEventManager.Instance.OnDamageTaken += TakeDamage;
+        // Suscripción a los nuevos eventos
+        coinCollectedEvent.RegisterListener(OnCoinCollected);
+        healthChangedEvent.RegisterListener(OnHealthChanged);
+        damageTakenEvent.RegisterListener(OnDamageTaken);
     }
 
     private void Update()
@@ -41,20 +47,21 @@ public class GameplayUIManager : MonoBehaviour
         timerText.text = $"Tiempo: {elapsedTime:F2}";
         UIEventManager.Instance.OnTimeUpdated?.Invoke(elapsedTime);
     }
-    private void UpdateScore(int value)
+
+    private void OnCoinCollected(int points)
     {
-        playerScoreData.AddScore(value);
+        playerScoreData.AddScore(points);
         scoreText.text = $"Puntaje: {playerScoreData.score}";
     }
 
-    private void Heal(int value)
+    private void OnHealthChanged(int healAmount)
     {
-        healthBar.value = Mathf.Min(healthBar.value + value, maxHealth);
+        healthBar.value = Mathf.Min(healthBar.value + healAmount, maxHealth);
     }
 
-    private void TakeDamage(int value)
+    private void OnDamageTaken(int damage)
     {
-        healthBar.value -= value;
+        healthBar.value -= damage;
         if (healthBar.value <= 0)
         {
             SceneManager.LoadScene("Results");
@@ -63,9 +70,9 @@ public class GameplayUIManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Unsubscribing to prevent memory leaks
-        UIEventManager.Instance.OnCoinCollected -= UpdateScore;
-        UIEventManager.Instance.OnHeartCollected -= Heal;
-        UIEventManager.Instance.OnDamageTaken -= TakeDamage;
+        // Desuscripción de los eventos
+        coinCollectedEvent.UnregisterListener(OnCoinCollected);
+        healthChangedEvent.UnregisterListener(OnHealthChanged);
+        damageTakenEvent.UnregisterListener(OnDamageTaken);
     }
 }

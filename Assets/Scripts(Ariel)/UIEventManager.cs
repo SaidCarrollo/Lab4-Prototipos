@@ -10,9 +10,7 @@ public class UIEventManager : SingletonPersistent<UIEventManager>
     public Action OnRestart;
     public Action OnGoToMenu;
 
-    public Action<int> OnCoinCollected;
-    public Action<int> OnHeartCollected;
-    public Action<int> OnDamageTaken;
+
     public Action<float> OnTimeUpdated;
 }
 

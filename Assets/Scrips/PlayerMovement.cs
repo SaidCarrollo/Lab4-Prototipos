@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private GameIntEvent coinCollectedEvent;
+    [SerializeField] private GameIntEvent healthChangedEvent;
+    [SerializeField] private GameIntEvent damageTakenEvent;
+
     [SerializeField] private int maxHealth = 10;
     [SerializeField] private int maxJumps = 2;
     [SerializeField] private float moveSpeed = 5f;
@@ -67,7 +71,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        UIEventManager.Instance.OnDamageTaken?.Invoke(damage);
+        damageTakenEvent?.Raise(damage);
 
         if (currentHealth <= 0)
         {
@@ -78,13 +82,13 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        UIEventManager.Instance.OnHeartCollected?.Invoke(amount);
+        healthChangedEvent?.Raise(amount); // Usamos valor positivo para curación
     }
 
     public void AddScore(int points)
     {
         scoreData.AddScore(points);
-        UIEventManager.Instance.OnCoinCollected?.Invoke(points);
+        coinCollectedEvent?.Raise(points);
     }
 
     public void ChangeColor(Color newColor)

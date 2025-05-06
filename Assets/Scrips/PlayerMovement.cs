@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -25,6 +24,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private RaycastHit2D groundCheck;
 
+    [SerializeField] private GameBoolEvent onVictoryDefeat;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,6 +34,7 @@ public class Player : MonoBehaviour
         UpdatePlayerColor();
         UIEventManager.Instance.OnColorChange += ChangeColor;
     }
+
     private void OnDestroy()
     {
         // Importante: Desuscribirse para evitar memory leaks
@@ -114,11 +116,9 @@ public class Player : MonoBehaviour
     }
     private void Die()
     {
-        SceneManager.LoadScene("Results");
-        // L�gica para reiniciar o mostrar pantalla de derrota
+        onVictoryDefeat?.Raise(false);
+        //SceneManager.LoadScene("Results");
     }
-
-
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -139,7 +139,8 @@ public class Player : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Door"))
         {
-            SceneManager.LoadScene("Results");
+            onVictoryDefeat?.Raise(true);
+            //SceneManager.LoadScene("Results");
         }
     }
 
